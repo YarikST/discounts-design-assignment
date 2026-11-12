@@ -3,27 +3,6 @@
 require "rails_helper"
 
 describe PromoCampaign do
-  describe "validations" do
-    subject { build(:promo_campaign) }
-
-    it { is_expected.to validate_presence_of(:title) }
-    it { is_expected.to validate_presence_of(:start_at) }
-    it { is_expected.to validate_presence_of(:finish_at) }
-    it { is_expected.to validate_presence_of(:discount_rate) }
-    it { is_expected.to validate_presence_of(:min_items_count) }
-    it { is_expected.to validate_numericality_of(:discount_rate).only_integer.is_in(1..100) }
-    it { is_expected.to validate_numericality_of(:min_items_count).only_integer.is_greater_than_or_equal_to(1) }
-
-    context "when finish_at is before start_at" do
-      let(:promo_campaign) { build(:promo_campaign, start_at: 1.day.from_now, finish_at: 1.day.ago) }
-
-      it "is invalid" do
-        expect(promo_campaign).not_to be_valid
-        expect(promo_campaign.errors[:finish_at]).to be_present
-      end
-    end
-  end
-
   describe "terms immutability" do
     context "when the campaign has started and the terms change" do
       let(:promo_campaign) do

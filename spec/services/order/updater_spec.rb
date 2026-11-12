@@ -13,13 +13,40 @@ describe Order::Updater do
   let!(:strawberries_campaign) do
     create(:promo_campaign, :each_item_discount, discount_rate: 10, min_items_count: 3, with_products: [strawberries])
   end
-  let(:created_order) do
-    Order::Creator.new(
-      params: { items: [{ product_id: fruit_tea.id, quantity: 2 }, { product_id: strawberries.id, quantity: 2 }] }
-    ).call
+  let(:persisted_order) { create(:order, subtotal_price: 16_22, discount_amount: 3_11, total_price: 13_11) }
+  let(:order) { Order.find(persisted_order.id) }
+  let(:fruit_tea_status) { Order::Item::ADDED }
+  let(:fruit_tea_offer_discarded_at) { nil }
+  let!(:fruit_tea_item) do
+    create(
+      :order_item,
+      order: persisted_order,
+      product: fruit_tea,
+      status: fruit_tea_status,
+      price: 3_11,
+      quantity: 2,
+      subtotal_price: 6_22,
+      discount_amount: 3_11,
+      total_price: 3_11
+    )
   end
-  let(:order) { Order.find(created_order.id) }
-  let(:fruit_tea_offer) { created_order.offers.find_by!(promotion: fruit_tea_campaign) }
+  let!(:fruit_tea_offer) do
+    create(
+      :order_offer,
+      order: persisted_order,
+      order_item: fruit_tea_item,
+      promotion: fruit_tea_campaign,
+      discount_amount: 3_11,
+      discarded_at: fruit_tea_offer_discarded_at
+    )
+  end
+
+  before do
+    create(
+      :order_item,
+      order: persisted_order, product: strawberries, price: 5_00, quantity: 2, subtotal_price: 10_00, total_price: 10_00
+    )
+  end
 
   describe "#call" do
     context "when an item no longer meets the campaign condition" do
@@ -62,12 +89,8 @@ describe Order::Updater do
     end
 
     context "when a refused product is added again" do
-      let(:order) do
-        Order::Updater.new(
-          order: Order.find(created_order.id),
-          params: { items: [{ product_id: fruit_tea.id, status: Order::Item::REFUSED_BY_CLIENT }] }
-        ).call
-      end
+      let(:fruit_tea_status) { Order::Item::REFUSED_BY_CLIENT }
+      let(:fruit_tea_offer_discarded_at) { 1.hour.ago }
       let(:params) { { items: [{ product_id: fruit_tea.id, quantity: 3, status: Order::Item::ADDED }] } }
 
       it "makes the item active with the new quantity and applies the campaign again" do

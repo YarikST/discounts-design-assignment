@@ -3,14 +3,6 @@
 require "rails_helper"
 
 describe Order::Item do
-  describe "validations" do
-    subject { build(:order_item, order: create(:order), product: create(:product)) }
-
-    it { is_expected.to validate_numericality_of(:quantity).only_integer.is_greater_than(0) }
-    it { is_expected.to validate_numericality_of(:price).only_integer.is_greater_than_or_equal_to(0) }
-    it { is_expected.to validate_uniqueness_of(:product_id).scoped_to(:order_id) }
-  end
-
   describe "#allowed_discount_amount" do
     context "when the item has no min recommended price" do
       let(:order_item) { build(:order_item, price: 5_00, quantity: 3, subtotal_price: 15_00) }

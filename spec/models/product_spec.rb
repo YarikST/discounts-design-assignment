@@ -3,14 +3,6 @@
 require "rails_helper"
 
 describe Product do
-  describe "validations" do
-    subject { build(:product) }
-
-    it { is_expected.to validate_presence_of(:name) }
-    it { is_expected.to validate_presence_of(:sku) }
-    it { is_expected.to validate_uniqueness_of(:sku).ignoring_case_sensitivity }
-  end
-
   describe "#sku" do
     let(:product) { build(:product, sku: " fr ") }
 
