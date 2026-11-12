@@ -1,3 +1,6 @@
+inherit_gem:
+  test-prof: config/rubocop-rspec.yml
+
 plugins:
   - rubocop-performance
   - rubocop-rails
@@ -8,10 +11,253 @@ plugins:
 AllCops:
   NewCops: enable
   TargetRubyVersion: 4.0
+  SuggestExtensions: false
+  ActiveSupportExtensionsEnabled: true
   Exclude:
     - "bin/**/*"
     - "db/schema.rb"
     - "vendor/**/*"
+    - "tmp/**/*"
+
+# Metrics rules
+Metrics/ModuleLength:
+  CountAsOne: ['array', 'hash', 'heredoc', 'method_call']
+  Max: 200
+
+Metrics/ClassLength:
+  CountAsOne: ['array', 'hash', 'heredoc', 'method_call']
+  Max: 200
+
+Metrics/BlockLength:
+  Max: 50
+  AllowedMethods:
+    - included
+  Exclude:
+    - '**/*.gemspec'
+    - 'spec/**/*'
+    - 'db/migrate/**/*'
+    - 'db/seeds.rb'
+    - 'lib/tasks/**/*'
+    - 'config/routes.rb'
+    - 'config/environments/**/*'
+
+Metrics/AbcSize:
+  Enabled: false
+
+Metrics/CyclomaticComplexity:
+  Enabled: false
+
+Metrics/PerceivedComplexity:
+  Enabled: false
+
+Metrics/ParameterLists:
+  CountKeywordArgs: false
+
+Metrics/CollectionLiteralLength:
+  Max: 500
+
+Metrics/MethodLength:
+  CountAsOne: ['array', 'hash', 'heredoc', 'method_call']
+  Max: 50
+  Exclude:
+    - db/migrate/**/*
+    - db/seeds.rb
+
+
+# Bundle rules
+Bundler/OrderedGems:
+  Enabled: false
+
+
+# Style rules
+Style/WordArray:
+  MinSize: 5
+
+Style/SymbolArray:
+  MinSize: 5
+
+Style/StringLiterals:
+  EnforcedStyle: double_quotes
+
+Style/GuardClause:
+  Enabled: false
+
+Style/Next:
+  Enabled: false
+
+Style/SoleNestedConditional:
+  Enabled: false
+
+Style/TrailingCommaInArrayLiteral:
+  Enabled: false
+
+Style/TrailingCommaInHashLiteral:
+  Enabled: false
 
 Style/Documentation:
   Enabled: false
+
+Style/ClassAndModuleChildren:
+  Enabled: false
+
+Style/Alias:
+  EnforcedStyle: prefer_alias_method
+
+Style/DoubleNegation:
+  Enabled: false
+
+Style/SafeNavigationChainLength:
+  Enabled: false
+
+
+Style/ItBlockParameter:
+  EnforcedStyle: only_numbered_parameters
+
+Style/InverseMethods:
+  Enabled: false
+
+Style/MixinGrouping:
+  Enabled: false
+
+Style/NumericPredicate:
+  Enabled: false
+
+Style/ConditionalAssignment:
+  Enabled: false
+
+Style/HashAsLastArrayItem:
+  Enabled: true
+  EnforcedStyle: braces
+
+Style/RedundantStructKeywordInit:
+  Enabled: false
+
+Style/NegatedIf:
+  Enabled: false
+
+Style/IfUnlessModifier:
+  Enabled: false
+
+# Layout rules
+Layout/LineLength:
+  Max: 120
+  Exclude:
+    - db/migrate/**/*
+
+Layout/ArgumentAlignment:
+  EnforcedStyle: with_fixed_indentation
+
+Layout/ParameterAlignment:
+  EnforcedStyle: with_fixed_indentation
+
+Layout/HashAlignment:
+  EnforcedLastArgumentHashStyle: ignore_implicit
+
+Layout/FirstArrayElementIndentation:
+  EnforcedStyle: consistent
+
+Layout/FirstHashElementIndentation:
+  EnforcedStyle: consistent
+
+Layout/MultilineMethodCallIndentation:
+  EnforcedStyle: indented
+
+Layout/MultilineAssignmentLayout:
+  EnforcedStyle: same_line
+
+Layout/EndAlignment:
+  EnforcedStyleAlignWith: variable
+
+Layout/IndentationWidth:
+  EnforcedStyleAlignWith: relative_to_receiver
+
+Layout/FirstHashElementLineBreak:
+  Enabled: true
+
+Layout/FirstArrayElementLineBreak:
+  Enabled: true
+
+Layout/MultilineHashKeyLineBreaks:
+  Enabled: true
+
+Naming/VariableNumber:
+  Enabled: false
+
+# Lint rules
+Lint/EmptyClass:
+  Enabled: false
+
+Lint/MissingSuper:
+  Enabled: false
+
+# RSpec rules
+RSpec/HookArgument:
+  Enabled: false
+
+RSpec/MultipleExpectations:
+  Enabled: false
+
+RSpec/ExampleLength:
+  Enabled: false
+
+RSpec/LetSetup:
+  Enabled: false
+
+RSpec/InstanceVariable:
+  Enabled: false
+
+RSpec/MultipleMemoizedHelpers:
+  Enabled: false
+
+RSpec/NestedGroups:
+  Max: 6
+
+RSpec/MessageSpies:
+  EnforcedStyle: receive
+
+RSpec/StubbedMock:
+  Enabled: false
+
+RSpec/DescribedClass:
+  Enabled: false
+
+RSpec/SpecFilePathFormat:
+  Enabled: false
+
+# Rails rules
+Rails/BulkChangeTable:
+  Enabled: false
+
+Rails/DefaultScope:
+  Enabled: true
+
+Rails/CreateTableWithTimestamps:
+  Enabled: false
+
+Rails/DeprecatedActiveModelErrorsMethods:
+  Enabled: false
+
+Rails/Delegate:
+  Enabled: false
+
+Rails/SkipsModelValidations:
+  Enabled: false
+
+# Defaults are set in the models (enumerize, attribute), not in the database
+Rails/ThreeStateBooleanColumn:
+  Enabled: false
+
+Rails/StrongParametersExpect:
+  Enabled: false
+
+# unfortunately, this cop is buggy and have a lot of false positives
+Rails/UniqueValidationWithoutIndex:
+  Enabled: false
+
+# Performance rules
+Performance/MethodObjectAsBlock:
+  Enabled: true
+
+Rails/Output:
+  Exclude:
+    - "lib/tasks/**/*"

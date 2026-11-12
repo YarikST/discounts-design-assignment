@@ -1,12 +1,36 @@
 # frozen_string_literal: true
 
-require 'simplecov'
-SimpleCov.start 'rails'
+if ENV["COVERAGE"] == "true"
+  require "simplecov"
 
-require 'super_diff/rspec-rails'
+  SimpleCov.start "rails" do
+    enable_coverage :branch
+  end
+end
+
+require "spec_helper"
+ENV["RAILS_ENV"] ||= "test"
+require_relative "../config/environment"
+abort("The Rails environment is running in production mode!") if Rails.env.production?
+require "rspec/rails"
+require "super_diff/rspec-rails"
+require "test_prof/recipes/rspec/let_it_be"
+require "test_prof/recipes/rspec/before_all"
+
+begin
+  ActiveRecord::Migration.maintain_test_schema!
+rescue ActiveRecord::PendingMigrationError => e
+  abort e.to_s.strip
+end
 
 RSpec.configure do |config|
+  config.fixture_paths = [Rails.root.join("spec/fixtures")]
+  config.use_transactional_fixtures = true
+  config.infer_spec_type_from_file_location!
+  config.filter_rails_from_backtrace!
+
   config.include FactoryBot::Syntax::Methods
+  config.include ActiveSupport::Testing::TimeHelpers
 end
 
 Shoulda::Matchers.configure do |config|
